@@ -18,7 +18,12 @@ from utils import (
 
 def get_bookmark_list(page_id, bookId):
     """获取我的划线"""
-    filter = {"property": "书籍", "relation": {"contains": page_id}}
+    filter = {
+        "and": [
+            {"property": "书籍", "relation": {"contains": page_id}},
+            {"property": "blockId", "rich_text": {"is_not_empty": True}},
+        ]
+    }
     results = notion_helper.query_all_by_book(
         notion_helper.bookmark_database_id, filter
     )
@@ -41,7 +46,12 @@ def get_bookmark_list(page_id, bookId):
 
 def get_review_list(page_id,bookId):
     """获取笔记"""
-    filter = {"property": "书籍", "relation": {"contains": page_id}}
+    filter = {
+        "and": [
+            {"property": "书籍", "relation": {"contains": page_id}},
+            {"property": "blockId", "rich_text": {"is_not_empty": True}},
+        ]
+    }
     results = notion_helper.query_all_by_book(notion_helper.review_database_id, filter)
     dict1 = {
         get_rich_text_from_result(x, "reviewId"): get_rich_text_from_result(
@@ -247,7 +257,6 @@ def append_blocks_to_notion(id, blocks, after, contents):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     options = parser.parse_args()
-    weread_cookie = os.getenv("WEREAD_COOKIE")
     branch = os.getenv("REF").split("/")[-1]
     repository =  os.getenv("REPOSITORY")
     weread_api = WeReadApi()
